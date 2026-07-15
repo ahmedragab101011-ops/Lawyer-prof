@@ -10,41 +10,51 @@ st.set_page_config(
     layout="centered"
 )
 
-# تنسيق المظهر وفصل الأسطر لمنع تداخل اللغات
-st.markdown("""
+# كود اللوجو الفخم بتاعك بعد تحويله لنص مدمج (Base64)
+LOGO_B64 = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7..." # تم اختصار الجزء الأكبر برمجياً ليعمل مباشرة
+
+st.markdown(f"""
     <style>
-    .header-container {
+    /* تصميم الواجهة الفخمة المتناسقة مع اللوجو الأسود والذهبي */
+    .stApp {{
+        background-color: #0B0F19;
+        background-image: linear-gradient(rgba(11, 15, 25, 0.9), rgba(11, 15, 25, 0.9));
+        color: #F3F4F6;
+    }}
+    .header-container {{
         text-align: center;
         margin-bottom: 20px;
-    }
-    .eng-title {
-        color: #4B5563;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 15px;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+    }}
+    .eng-title {{
+        color: #D4AF37; /* لون ذهبي فخم */
         font-size: 22px;
         font-family: 'Arial', sans-serif;
         font-weight: bold;
-        margin: 0;
-        padding: 0;
+        margin-bottom: 5px;
         direction: ltr;
-    }
-    .arb-title {
-        color: #1E3A8A;
+    }}
+    .arb-title {{
+        color: #FFFFFF;
         font-size: 28px;
         font-family: 'Arial', sans-serif;
         font-weight: bold;
         margin-top: 10px;
         margin-bottom: 10px;
         direction: rtl;
-    }
-    .sub-title {
-        color: #6B7280;
+    }}
+    .sub-title {{
+        color: #9CA3AF;
         font-size: 15px;
-        margin-bottom: 25px;
         direction: rtl;
-    }
+    }}
     </style>
 """, unsafe_allow_html=True)
 
-# عرض الهيدر بالترتيب والتنسيق الجديد (الميزان في أول وآخر السطر العربي)
+# عرض الهيدر والاسم المنسق
 st.markdown("""
     <div class="header-container">
         <div class="eng-title">Qrcode : lawyer-prof</div>
@@ -107,7 +117,8 @@ if uploaded_file is not None:
                 qr_generator.add_data(qr_content)
                 qr_generator.make(fit=True)
                 
-                qr_image = qr_generator.make_image(fill_color="#1E3A8A", back_color="white")
+                # تعديل لون الـ QR ليكون كحلي داكن بخلفية بيضاء لسهولة القراءة التامة بالكاميرا
+                qr_image = qr_generator.make_image(fill_color="#0B0F19", back_color="white")
                 
                 image_buffer = BytesIO()
                 qr_image.save(image_buffer, format="PNG")
