@@ -2,6 +2,7 @@ import streamlit as st
 import docx
 import qrcode
 from io import BytesIO
+import os
 
 # 1. إعدادات الصفحة
 st.set_page_config(
@@ -10,56 +11,62 @@ st.set_page_config(
     layout="centered"
 )
 
-# كود الصورة الفعلي كامل ومحول لـ Base64 ليعمل كخلفية مباشرة
-LOGO_B64 = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7..." # تم تضمين كود الصورة المضغوطة هنا لتعمل كخلفية مائية
+# التحقق من وجود اللوجو في الملفات باسم logo.jpg
+logo_file = "logo.jpg"
+has_logo = os.path.exists(logo_file)
+
+bg_style = ""
+if has_logo:
+    # إضافة اللوجو كخلفية مائية شفافة ومريحة للعين
+    bg_style = f"""
+    .stApp {{
+        background-image: linear-gradient(rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.94)), url("app/static/{logo_file}");
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center 60%;
+        background-size: 300px;
+    }}
+    """
 
 st.markdown(f"""
     <style>
-    /* تطبيق الخلفية المائية باستخدام كود الصورة */
-    .stApp {{
-        background-color: #0B0F19;
-        background-image: linear-gradient(rgba(11, 15, 25, 0.92), rgba(11, 15, 25, 0.92)), url("data:image/jpeg;base64,{LOGO_B64}");
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-position: center 65%;
-        background-size: 320px;
-        color: #F3F4F6;
-    }}
+    {bg_style}
     .header-container {{
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
         padding: 20px;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 15px;
-        border: 1px solid rgba(212, 175, 55, 0.2);
+        background-color: #F8FAFC;
+        border-radius: 12px;
+        border: 1px solid #E2E8F0;
     }}
     .eng-title {{
-        color: #D4AF37;
+        color: #4B5563;
         font-size: 22px;
         font-family: 'Arial', sans-serif;
         font-weight: bold;
-        margin-bottom: 5px;
+        margin: 0;
+        padding: 0;
         direction: ltr;
     }}
     .arb-title {{
-        color: #FFFFFF;
-        font-size: 24px;
+        color: #1E3A8A;
+        font-size: 26px;
         font-family: 'Arial', sans-serif;
         font-weight: bold;
         margin-top: 10px;
         margin-bottom: 10px;
-        white-space: nowrap; /* منع نزول الميزان أو الاسم لسطر جديد */
+        white-space: nowrap;
         direction: rtl;
     }}
     .sub-title {{
-        color: #9CA3AF;
+        color: #6B7280;
         font-size: 15px;
         direction: rtl;
     }}
     </style>
 """, unsafe_allow_html=True)
 
-# الهيدر المنسق بدون تداخل أو نزول سطور
+# عرض الواجهة المنسقة والثابتة
 st.markdown("""
     <div class="header-container">
         <div class="eng-title">Qrcode : lawyer-prof</div>
@@ -89,8 +96,8 @@ def extract_clean_text(file):
     except Exception as e:
         raise ValueError(f"فشل في قراءة ملف الـ Word. التفاصيل: {str(e)}")
 
-# واجهة رفع الملف
-uploaded_file = st.file_uploader("اختر ملف الوورد الخاص بالقضية", type=["docx"])
+# واجهة رفع الملف - الآن واضحة تماماً وبألوانها الأصلية
+uploaded_file = st.file_uploader("اختر ملف الوورد الخاص بالقضية (.docx)", type=["docx"])
 
 if uploaded_file is not None:
     st.markdown("<br>", unsafe_allow_html=True)
@@ -122,7 +129,8 @@ if uploaded_file is not None:
                 qr_generator.add_data(qr_content)
                 qr_generator.make(fit=True)
                 
-                qr_image = qr_generator.make_image(fill_color="#0B0F19", back_color="white")
+                # اللون الأسود الطبيعي التقليدي للـ QR كود
+                qr_image = qr_generator.make_image(fill_color="black", back_color="white")
                 
                 image_buffer = BytesIO()
                 qr_image.save(image_buffer, format="PNG")
