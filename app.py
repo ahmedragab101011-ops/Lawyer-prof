@@ -11,8 +11,8 @@ st.set_page_config(
     layout="centered"
 )
 
-# التحقق من وجود اللوجو في الملفات باسم logo.jpg
-logo_file = "logo.jpg"
+# التحقق من وجود اللوجو في الملفات باسم logo.png
+logo_file = "logo.png"
 has_logo = os.path.exists(logo_file)
 
 bg_style = ""
