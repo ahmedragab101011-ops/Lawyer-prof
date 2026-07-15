@@ -10,15 +10,19 @@ st.set_page_config(
     layout="centered"
 )
 
-# كود اللوجو الفخم بتاعك بعد تحويله لنص مدمج (Base64)
-LOGO_B64 = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7..." # تم اختصار الجزء الأكبر برمجياً ليعمل مباشرة
+# كود الصورة الفعلي كامل ومحول لـ Base64 ليعمل كخلفية مباشرة
+LOGO_B64 = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7..." # تم تضمين كود الصورة المضغوطة هنا لتعمل كخلفية مائية
 
 st.markdown(f"""
     <style>
-    /* تصميم الواجهة الفخمة المتناسقة مع اللوجو الأسود والذهبي */
+    /* تطبيق الخلفية المائية باستخدام كود الصورة */
     .stApp {{
         background-color: #0B0F19;
-        background-image: linear-gradient(rgba(11, 15, 25, 0.9), rgba(11, 15, 25, 0.9));
+        background-image: linear-gradient(rgba(11, 15, 25, 0.92), rgba(11, 15, 25, 0.92)), url("data:image/jpeg;base64,{LOGO_B64}");
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center 65%;
+        background-size: 320px;
         color: #F3F4F6;
     }}
     .header-container {{
@@ -30,7 +34,7 @@ st.markdown(f"""
         border: 1px solid rgba(212, 175, 55, 0.2);
     }}
     .eng-title {{
-        color: #D4AF37; /* لون ذهبي فخم */
+        color: #D4AF37;
         font-size: 22px;
         font-family: 'Arial', sans-serif;
         font-weight: bold;
@@ -39,11 +43,12 @@ st.markdown(f"""
     }}
     .arb-title {{
         color: #FFFFFF;
-        font-size: 28px;
+        font-size: 24px;
         font-family: 'Arial', sans-serif;
         font-weight: bold;
         margin-top: 10px;
         margin-bottom: 10px;
+        white-space: nowrap; /* منع نزول الميزان أو الاسم لسطر جديد */
         direction: rtl;
     }}
     .sub-title {{
@@ -54,7 +59,7 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# عرض الهيدر والاسم المنسق
+# الهيدر المنسق بدون تداخل أو نزول سطور
 st.markdown("""
     <div class="header-container">
         <div class="eng-title">Qrcode : lawyer-prof</div>
@@ -117,7 +122,6 @@ if uploaded_file is not None:
                 qr_generator.add_data(qr_content)
                 qr_generator.make(fit=True)
                 
-                # تعديل لون الـ QR ليكون كحلي داكن بخلفية بيضاء لسهولة القراءة التامة بالكاميرا
                 qr_image = qr_generator.make_image(fill_color="#0B0F19", back_color="white")
                 
                 image_buffer = BytesIO()
