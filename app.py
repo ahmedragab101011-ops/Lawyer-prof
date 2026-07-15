@@ -3,6 +3,7 @@ import docx
 import qrcode
 from io import BytesIO
 import os
+import base64
 
 # 1. إعدادات الصفحة
 st.set_page_config(
@@ -11,22 +12,30 @@ st.set_page_config(
     layout="centered"
 )
 
-# التحقق من وجود اللوجو في الملفات باسم logo.png
-logo_file = "logo.png"
-has_logo = os.path.exists(logo_file)
+# دالة ذكية لقراءة ملف اللوجو من السيرفر وتحويله برمجياً لخلفية
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
 
+# التحقق من وجود اللوجو وتحويله تلقائياً
+logo_file = "logo.png"
 bg_style = ""
-if has_logo:
-    # إضافة اللوجو كخلفية مائية شفافة ومريحة للعين
-    bg_style = f"""
-    .stApp {{
-        background-image: linear-gradient(rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.94)), url("app/static/{logo_file}");
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-position: center 60%;
-        background-size: 300px;
-    }}
-    """
+
+if os.path.exists(logo_file):
+    try:
+        bin_str = get_base64_of_bin_file(logo_file)
+        bg_style = f"""
+        .stApp {{
+            background-image: linear-gradient(rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.94)), url("data:image/png;base64,{bin_str}");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center 60%;
+            background-size: 300px;
+        }}
+        """
+    except Exception as e:
+        pass # إذا حدث أي خطأ لا يعطل التطبيق
 
 st.markdown(f"""
     <style>
@@ -96,7 +105,7 @@ def extract_clean_text(file):
     except Exception as e:
         raise ValueError(f"فشل في قراءة ملف الـ Word. التفاصيل: {str(e)}")
 
-# واجهة رفع الملف - الآن واضحة تماماً وبألوانها الأصلية
+# واجهة رفع الملف - واضحة جداً وبألوان مريحة للعين تضمن ظهور الأزرار
 uploaded_file = st.file_uploader("اختر ملف الوورد الخاص بالقضية (.docx)", type=["docx"])
 
 if uploaded_file is not None:
@@ -129,7 +138,7 @@ if uploaded_file is not None:
                 qr_generator.add_data(qr_content)
                 qr_generator.make(fit=True)
                 
-                # اللون الأسود الطبيعي التقليدي للـ QR كود
+                # لون الـ QR كود الأسود الافتراضي والممتاز للقراءة بالكاميرا
                 qr_image = qr_generator.make_image(fill_color="black", back_color="white")
                 
                 image_buffer = BytesIO()
